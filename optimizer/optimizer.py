@@ -1,5 +1,7 @@
 from optimizer.exceptions import OptimizerAPIException, OptimizerAPIClientException, OptimizerAPIServerException
 from urllib.parse import urlunparse
+
+from optimizer.session import RetrySession
 from optimizer.settings import PATHS, HTTPS_CERTIFICATE_LOCATION
 import logging
 
@@ -21,6 +23,7 @@ class Optimizer:
         super().__init__()
         self.API_DOMAIN = api_domain
         self.API_SCHEME = api_schema
+        self._session = RetrySession(self)
 
     def get_task(self, task_id):
         url = urlunparse((self.API_SCHEME, self.API_DOMAIN, f"{PATHS['TASK_PATH']}/{task_id}", '', '', ''))
