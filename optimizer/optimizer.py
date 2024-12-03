@@ -1,8 +1,6 @@
-from optimizer.session import RetrySession, PostRetrySession
 from optimizer.exceptions import OptimizerAPIException, OptimizerAPIClientException, OptimizerAPIServerException
 from urllib.parse import urlunparse
-import requests
-from optimizer.settings import API_DOMAIN, API_SCHEME, PATHS, HTTPS_CERTIFICATE_LOCATION
+from optimizer.settings import PATHS, HTTPS_CERTIFICATE_LOCATION
 import logging
 
 
@@ -11,16 +9,19 @@ logger = logging.getLogger('root')
 
 class Optimizer(object):
 
-    def __new__(cls, *args, **kwargs):
+    def __new__(cls, api_domain, api_schema, *args, **kwargs):
         self = "__self__"
         if not hasattr(cls, self):
             instance = object.__new__(cls)
             instance.__init__(*args, **kwargs)
             setattr(cls, self, instance)
+        self.API_DOMAIN = api_domain
+        self.API_SCHEME = api_schema
+
         return getattr(cls, self)
 
     def get_task(self, task_id):
-        url = urlunparse((API_SCHEME, API_DOMAIN, f"{PATHS['TASK_PATH']}/{task_id}", '', '', ''))
+        url = urlunparse((self.API_SCHEME, self.API_DOMAIN, f"{PATHS['TASK_PATH']}/{task_id}", '', '', ''))
         params = {}
         resp = self._session.get(url, params={}, verify=HTTPS_CERTIFICATE_LOCATION)
         self._handle_api_resp(method='GET', url=url, params={}, resp=resp)
