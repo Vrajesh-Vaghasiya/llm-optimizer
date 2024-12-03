@@ -11,5 +11,5 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url='https://github.com/avni-sixsense/image-handler-sdk',
     packages=['optimizer'],
-    install_requires=['requests==2.32.0', 'environ==1.0'],
+    install_requires=['requests==2.32.0'],
 )

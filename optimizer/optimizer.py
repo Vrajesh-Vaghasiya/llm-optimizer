@@ -36,8 +36,8 @@ class Optimizer:
             raise OptimizerAPIException("API call failed.")
         return resp.json()
 
-    def create_task(self, num_of_tasks: int, model: str, temprature: int, max_token: int, input_token: int) -> dict:
-        assert isinstance(num_of_tasks, int)
+    def create_task(self, message_text: str, model: str, temprature: int, max_token: int, input_token: int) -> dict:
+        assert isinstance(message_text, str)
         assert isinstance(model, str)
         assert isinstance(temprature, int)
         assert isinstance(max_token, int)
@@ -47,22 +47,18 @@ class Optimizer:
             "model": model,
             "temperature": temprature,
             "max_token": max_token,
-            "input_token": input_token
+            "input_token": input_token,
+            "message_text": message_text
         }
         url = urlunparse((self.API_SCHEME, self.API_DOMAIN, f"{PATHS['TASK_PATH']}", '', '', ''))
-        responses = {}
-        for i in range(num_of_tasks):
-            payload['message_text'] = {"user": f"test question {i}"}
-            headers = {"access-key": self.access_key}
-            resp = self._session.post(json=payload, url=url, headers=headers)
-            self._handle_api_resp(method='GET', url=url, resp=resp)
-            if not resp.json():
-                logger.error(f"Failed to call the API.")
-                raise OptimizerAPIException("API call failed.")
+        headers = {"access-key": self.access_key}
+        resp = self._session.post(json=payload, url=url, headers=headers)
+        self._handle_api_resp(method='GET', url=url, resp=resp)
+        if not resp.json():
+            logger.error(f"Failed to call the API.")
+            raise OptimizerAPIException("API call failed.")
 
-            responses[f'response_task_{i}'] = resp.json()
-
-        return responses
+        return resp.json()
 
     def _handle_api_resp(self, method, url, resp):
         if not resp.ok:
