@@ -18,7 +18,7 @@ class RetrySession(Session):
             # If backoff_factor is 0.5 and API_RETRY_COUNT is 3, api is called after [0.5,1,2]
             # If backoff_factor is 1 and API_RETRY_COUNT is 3, api is called after [1,2,4]
             # this is formula: sleep time = {backoff factor} * (2 ** ({number of total retries} - 1))
-            retry = Retry(total=API_RETRY_COUNT, backoff_factor=API_BACKOFF_FACTOR, status_forcelist=[int(x) for x in API_STATUS_FORCE_LIST.split(',')], method_whitelist=["HEAD", "GET", "PUT", "DELETE", "OPTIONS", "TRACE", "PATCH"])
+            retry = Retry(total=API_RETRY_COUNT, backoff_factor=API_BACKOFF_FACTOR, status_forcelist=[int(x) for x in API_STATUS_FORCE_LIST.split(',')], allowed_methods=["HEAD", "GET", "PUT", "DELETE", "OPTIONS", "TRACE", "PATCH"])
             adapter = HTTPAdapter(max_retries=retry)
             self.mount('http://', adapter)
             self.mount('https://', adapter)
@@ -46,7 +46,7 @@ class PostRetrySession(Session):
             # If backoff_factor is 0.5 and API_RETRY_COUNT is 3, api is called after [0.5,1,2]
             # If backoff_factor is 1 and API_RETRY_COUNT is 3, api is called after [1,2,4]
             # this is formula: sleep time = {backoff factor} * (2 ** ({number of total retries} - 1))
-            retry = Retry(total=API_RETRY_COUNT, backoff_factor=API_BACKOFF_FACTOR, status_forcelist=[501, 502, 503], method_whitelist=["HEAD", "OPTIONS", "POST"])
+            retry = Retry(total=API_RETRY_COUNT, backoff_factor=API_BACKOFF_FACTOR, status_forcelist=[501, 502, 503], allowed_methods=["HEAD", "OPTIONS", "POST"])
             adapter = HTTPAdapter(max_retries=retry)
             self.mount('http://', adapter)
             self.mount('https://', adapter)

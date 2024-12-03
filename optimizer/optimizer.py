@@ -29,15 +29,15 @@ class Optimizer:
         url = urlunparse((self.API_SCHEME, self.API_DOMAIN, f"{PATHS['TASK_PATH']}/{task_id}", '', '', ''))
         params = {}
         resp = self._session.get(url, params={}, verify=HTTPS_CERTIFICATE_LOCATION)
-        self._handle_api_resp(method='GET', url=url, params={}, resp=resp)
+        self._handle_api_resp(method='GET', url=url, resp=resp)
         if not resp.json():
             logger.error(f"Failed to call the API.")
             raise OptimizerAPIException("API call failed.")
         return resp.json()
 
-    def _handle_api_resp(self, method, url, data, resp):
+    def _handle_api_resp(self, method, url, resp):
         if not resp.ok:
-            logger.debug(f"{method} url: {url} data: {data}\nresp: {resp.status_code} {resp.text}")
+            logger.debug(f"{method} url: {url} resp: {resp.status_code} {resp.text}")
             if 400 <= resp.status_code < 500:
                 raise OptimizerAPIClientException(resp.text)
             elif 500 <= resp.status_code < 600:
